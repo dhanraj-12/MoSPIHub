@@ -1,6 +1,6 @@
 export const variableMap_HHRV = {
     FI_hh_fv: "File Identification",
-    B1q2_hh_fv: "Schdule",
+    B1q2_hh_fv: "Schedule",
     qtr_hh_fv: "Quarter",
     visit_hh_fv: "Visit",
     b1q3_hh_fv: "Sector",

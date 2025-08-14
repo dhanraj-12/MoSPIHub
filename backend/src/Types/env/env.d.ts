@@ -6,5 +6,6 @@ declare namespace NodeJS {
         DATABASE:string
         DB_PASSWORD :string
         RDSPORT:string
+        MONGO_URI:string
     }
   }
