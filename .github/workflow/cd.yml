@@ -1,0 +1,31 @@
+name: CI and CD for MoSPI
+
+on: 
+  push:
+    branch: 
+      -main
+
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: setup Node.js
+        uses: actions/setup-node@v4
+        with: 
+          node-version: '20'
+        
+      - name: Install dependencies for backend
+        run: cd backend && npm i && cd ..
+
+      - name: Install dependencies for frontend
+        run: cd frontend && npm i && cd ..
+
+      - name: Build the Project
+        run: cd backend && npm run build && cd .. && cd frontend && npm run build
+      
+      
+
