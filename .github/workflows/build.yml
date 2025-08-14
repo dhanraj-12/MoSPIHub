@@ -1,4 +1,4 @@
-name: CI and CD for MoSPI
+name: CI for MoSPI
 
 on: 
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs: 
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,8 @@ jobs:
 
       - name: Build the Project
         run: cd backend && npm run build && cd .. && cd frontend && npm run build
+
+
       
       
 
