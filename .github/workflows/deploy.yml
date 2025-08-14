@@ -26,7 +26,6 @@ jobs:
                 key: ${{ secrets.EC2_KEY }}
                 port: 22
                 script: |
-                  script: |
                     # --- repo details ---
                     REPO_DIR=/home/ubuntu/MoSPIHub
                     REPO_URL=https://github.com/dhanraj-12/MoSPIHub
