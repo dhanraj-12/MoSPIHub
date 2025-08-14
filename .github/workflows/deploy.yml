@@ -26,49 +26,48 @@ jobs:
                 key: ${{ secrets.EC2_KEY }}
                 port: 22
                 script: |
-                  # setting repo detail
-                  REPO_DIR=/home/ubuntu/MoSPIHub
-                  REPO_URL=https://github.com/dhanraj-12/MoSPIHub
+                  script: |
+                    # --- repo details ---
+                    REPO_DIR=/home/ubuntu/MoSPIHub
+                    REPO_URL=https://github.com/dhanraj-12/MoSPIHub
 
-                  #  Clone or pull repo
-                  if [ -d \"\$REPO_DIR/.git\" ]; then
-                    echo 'Repo exists, pulling latest changes...'
-                    cd \$REPO_DIR
-                    git reset --hard
-                    git pull origin main
-                  else
-                    echo 'Repo does not exist, cloning...'
-                    git clone \$REPO_URL 
-                  fi
+                    # --- clone or pull ---
+                    if [ -d "$REPO_DIR/.git" ]; then
+                      echo 'Repo exists, pulling latest changes...'
+                      cd "$REPO_DIR"
+                      git reset --hard
+                      git pull origin main
+                    else
+                      echo 'Repo does not exist, cloning...'
+                      git clone "$REPO_URL" "$REPO_DIR"
+                    fi
 
-                  #creating .env
+                    # --- create .env ---
+                    cat > "$REPO_DIR/backend/.env" << 'EOF'
+                    PORT=${{ secrets.PORT }}
+                    DB_USER=${{ secrets.DB_USER }}
+                    DB_HOST=${{ secrets.DB_HOST }}
+                    DATABASE=${{ secrets.DATABASE }}
+                    DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+                    RDSPORT=${{ secrets.RDSPORT }}
+                    MONGO_URI=${{ secrets.MONGO_URI }}
+                    EOF
 
-                  cat > \$REPO_DIR/backend/.env << EOF
-                  PORT=${{secrets.PORT}}
-                  DB_USER=${{secrets.DB_USER}}
-                  DB_HOST=${{secrets.DB_HOST}}
-                  DATABASE=${{secrets.DATABASE}}
-                  DB_PASSWORD=${{secrets.DB_PASSWORD}}
-                  RDSPORT=${{secrets.RDSPORT}}
-                  MONGO_URI=${{secrets.MONGO_URI}}
-                  EOF
+                    # --- build backend ---
+                    cd "$REPO_DIR/backend"
+                    npm ci
+                    npm run build
 
+                    # --- build + deploy frontend ---
+                    cd ../frontend
+                    npm ci
+                    npm run build
+                    sudo rm -rf /var/www/html/*
+                    sudo cp -r build/* /var/www/html
 
-                  #build backend
+                    # --- start backend with pm2 ---
+                    pm2 restart all || pm2 start dist/index.js --name mospihub-backend
 
-                  cd \&REPO_DIR/backend
-                  npm ci
-                  npm run build
-
-                  #build and deploy frontend
-                  cd ../frontend
-                  npm run build
-                  rm -rf /var/www/html/*
-                  cp -r build/* /var/www/html
-
-
-                  #cd ../backend
-                  pm2 restart all || pm2 start dist/index.js --name mospihub-backend
 
             
     
