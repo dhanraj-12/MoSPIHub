@@ -2,8 +2,8 @@ name: CI and CD for MoSPI
 
 on: 
   push:
-    branch: 
-      -main
+    branches: 
+      - main
 
 jobs: 
   build-and-deploy:
