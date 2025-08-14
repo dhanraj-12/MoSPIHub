@@ -1,5 +1,14 @@
-function SurveyCom({ survey }) {
-  return <div>{survey.survey_name}</div>;
-}
+type Survey = {
+  _id: string;
+  survey_name: string;
+};
 
-export default SurveyCom;
+type SurveyComProps = {
+  survey: Survey;
+};
+  
+  function SurveyCom({ survey }: SurveyComProps) {
+    return <div>{survey.survey_name}</div>;
+  }
+
+  export default SurveyCom;

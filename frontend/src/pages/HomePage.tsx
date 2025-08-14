@@ -2,15 +2,27 @@ import axios from "axios";
 import BASE_URL from "../Config";
 import { useEffect, useState } from "react";
 import SurveyCom from "../components/surveycom";
-import { useNavigate } from "react-router-dom";
 import { ClipboardDocumentListIcon, TableCellsIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+
+type Survey = {
+  _id: string;
+  survey_name: string;
+};
+
+type TableItem = {
+  _id: string;
+  survey_table_name: string;
+};
+
 
 function HomePage() {
   const navigate = useNavigate();
-  const [surveys, setSurveys] = useState([]);
-  const [tables, setTables] = useState([]);
-  const [selectedSurvey, setSelectedSurvey] = useState(null);
+  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [tables, setTables] = useState<TableItem[]>([]);
+  const [selectedSurvey, setSelectedSurvey] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -28,9 +40,10 @@ function HomePage() {
     fetchSurvey();
   }, []);
 
-  const handleSurveyClick = async (surveyId) => {
+  const handleSurveyClick = async (surveyId: String) => {
     setLoading(true);
     try {
+      //@ts-ignore
       setSelectedSurvey(surveyId);
       const res = await axios.get(`${BASE_URL}/surveytables/${surveyId}`);
       setTables(res.data.data);
@@ -41,7 +54,7 @@ function HomePage() {
     }
   };
 
-  const handletableclick = (survey_table_name) => {
+  const handletableclick = (survey_table_name: any) => {
     navigate("/query", {
       state: { survey_table_name: survey_table_name },
     });

@@ -1,4 +1,7 @@
-function DataTable({ data }) {
+type DataTableProps = {
+  data: Record<string, unknown>[]; // array of objects with string keys
+};
+function DataTable({ data } : DataTableProps) {
     if (!data || data.length === 0) {
       return (
         <div className="flex items-center justify-center p-8 text-gray-500 bg-gray-50 rounded-lg">

@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ClipboardDocumentIcon, CheckIcon } from '@heroicons/react/24/outline';
 
-function JsonViewer({ data }) {
+
+type JsonViewerProps = {
+  data: unknown[]; // can be any JSON-like data
+};
+
+function JsonViewer({ data } : JsonViewerProps) {
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [highlightedJson, setHighlightedJson] = useState('');
@@ -83,7 +88,7 @@ function JsonViewer({ data }) {
   );
 }
 
-function highlightJson(json) {
+function highlightJson(json : any) {
   if (typeof json !== 'string') {
     json = JSON.stringify(json, null, 2);
   }
@@ -93,7 +98,7 @@ function highlightJson(json) {
   
   return json.replace(
     /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
-    (match) => {
+    (match: any) => {
       let cls = 'text-gray-300';
       if (/:$/.test(match)) {
         cls = 'text-blue-400'; // keys

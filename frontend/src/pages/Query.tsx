@@ -1,42 +1,47 @@
-import { useState } from "react";
-import { data, useLocation } from "react-router-dom";
+import { useState} from "react";
+import type { KeyboardEvent } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../Config";
 import DataTable from "../components/DataTable";
 import JsonViewer from "../components/Jsonviewer";
 import { TableCellsIcon, CodeBracketIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
+type LocationState = { survey_table_name?: string };
+type TableData = Record<string, any>[]; // array of objects for table rendering
+
 function Query() {
-  const location = useLocation();
+  const location = useLocation() as { state?: LocationState };
   const { survey_table_name } = location.state || {};
-  const [query, setQuery] = useState("");
-  const [tableData, setTableData] = useState([]);
-  const [view, setView] = useState("table"); // "table" or "json"
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+  const [query, setQuery] = useState<string>("");
+  const [tableData, setTableData] = useState<TableData>([]);
+  const [view, setView] = useState<"table" | "json">("table");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const processQuery = async () => {
     if (!query.trim()) return;
-    
+
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post(`${BASE_URL}/resolve`, {
+      const res = await axios.post<TableData>(`${BASE_URL}/resolve`, {
         query,
-        survey: survey_table_name
+        survey: survey_table_name,
       });
-      console.log(res.data)
+      console.log(res.data);
       setTableData(res.data || []);
-    } catch (error) {
-      console.error("Error processing query:", error);
-      setError(error.response?.data?.message || "An error occurred while processing your query");
+    } catch (err: any) {
+      console.error("Error processing query:", err);
+      setError(err.response?.data?.message || "An error occurred while processing your query");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
       processQuery();
     }
   };
