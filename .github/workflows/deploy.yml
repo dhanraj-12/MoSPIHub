@@ -2,7 +2,7 @@ name: CD for MoSPI
 
 on:
   workflow_run:
-    workflows: [build]
+    workflows: [CI for MoSPI]
     types: 
      - completed
 
