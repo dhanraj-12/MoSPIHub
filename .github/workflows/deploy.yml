@@ -70,6 +70,7 @@ jobs:
                     sudo cp -r build/* /var/www/html
 
                     # --- start backend with pm2 ---
+                    cd ../backend
                     pm2 restart all || pm2 start dist/index.js --name mospihub-backend
 
 
