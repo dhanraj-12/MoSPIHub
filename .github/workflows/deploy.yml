@@ -52,6 +52,11 @@ jobs:
                     MONGO_URI=${{ secrets.MONGO_URI }}
                     EOF
 
+
+                    #----export nvm path---
+                    export NVM_DIR=~/.nvm
+                    source ~/.nvm/nvm.sh
+                    
                     # --- build backend ---
                     cd "$REPO_DIR/backend"
                     npm ci
