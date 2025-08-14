@@ -1,15 +1,17 @@
 import express from "express"
 import mongoose from "mongoose";
+import cors from "cors"
 import dotenv from "dotenv"
 import resolvRouter from "./Routers/resolvequery.js";
 import client from "./Util/Rds.js";
 import surveyRouter from "./Routers/add_survey.js";
+import getsurveyrouter from "./Routers/get_survey.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 app.use(express.json());
-
+app.use(cors())
 
 // db Connection
 
@@ -46,6 +48,8 @@ app.get("/",(req,res)=>{
 
 app.use("/api",resolvRouter);
 app.use("/api",surveyRouter);
+app.use("/api",getsurveyrouter);
+
 
 app.listen(PORT,()=>{
     console.log(`Server is listing on ${PORT}`)

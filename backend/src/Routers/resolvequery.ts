@@ -6,10 +6,10 @@ import { variableMap_HHRV } from "../Data_Dictionary/(PLFS)/HHRV.js";
 import { variableMap_HHFV } from "../Data_Dictionary/(PLFS)/HHFV.js";
 
 const surveyMap: Record<string, Record<string, string>> = {
-  "PLFS_HHRV_2019-20": variableMap_HHRV,
-  "PLFS_HHRV_2018-19": variableMap_HHRV,
-  "PLFS_HHFV_2018-19": variableMap_HHFV,
-  "PLFS_HHFV_2019-20": variableMap_HHFV,
+  "HHRV_2019_20": variableMap_HHRV,
+  "HHRV_2018_19": variableMap_HHRV,
+  "HHFV_2018_19": variableMap_HHFV,
+  "HHFV_2019_20": variableMap_HHFV,
 };
 
 function getReverseMap(survey: string): Record<string, string> {
