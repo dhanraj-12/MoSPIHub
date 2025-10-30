@@ -6,6 +6,9 @@ import resolvRouter from "./Routers/resolvequery.js";
 import client from "./Util/Rds.js";
 import surveyRouter from "./Routers/add_survey.js";
 import getsurveyrouter from "./Routers/get_survey.js";
+import CreateSurvey from "./Routers/creat_survey.js";
+import addTable from "./Routers/Addtables.js";
+import RedisClient from "./Util/reddisclient.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -49,7 +52,8 @@ app.get("/",(req,res)=>{
 app.use("/api",resolvRouter);
 app.use("/api",surveyRouter);
 app.use("/api",getsurveyrouter);
-
+app.use("/api",CreateSurvey);
+app.use("/api",addTable);
 
 app.listen(PORT,()=>{
     console.log(`Server is listing on ${PORT}`)
