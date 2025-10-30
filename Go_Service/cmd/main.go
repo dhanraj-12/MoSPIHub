@@ -17,7 +17,7 @@ import (
 // Global variables initialized from environment
 var (
 	JOB_QUEUE_NAME    string
-	STATUS_QUEUE_NAME string
+	STATUS_HASH_KEY string
 	REDIS_HOST        string
 )
 
@@ -33,9 +33,9 @@ func init() {
 	// --- 2. Load Configuration ---
 	REDIS_HOST = os.Getenv("REDIS_HOST")
 	JOB_QUEUE_NAME = os.Getenv("JOB_QUEUE_NAME")
-	STATUS_QUEUE_NAME = os.Getenv("STATUS_QUEUE_NAME")
+	STATUS_HASH_KEY = os.Getenv("STATUS_HASH_KEY")
 	
-	if REDIS_HOST == "" || JOB_QUEUE_NAME == "" || STATUS_QUEUE_NAME == "" {
+	if REDIS_HOST == "" || JOB_QUEUE_NAME == "" || STATUS_HASH_KEY == "" {
 		log.Fatal("FATAL: Redis configuration missing in environment variables.")
 	}
 
@@ -116,28 +116,35 @@ func processJob(job types.Job) { // <-- FIX: Use the shared type
 }
 
 // reportStatus pushes the final result back to a Redis status queue/key.
+// reportStatus pushes the final result to a Redis Hash for O(1) lookups.
 func reportStatus(jobID string, duration time.Duration, success bool) {
-	status := "FAILURE"
-	if success {
-		status = "SUCCESS"
-	}
-	
-	statusMessage := map[string]interface{}{
-		"jobId": jobID,
-		"status": status,
-		"duration": duration.String(),
-		"timestamp": time.Now().Unix(),
-	}
-
-	jsonMessage, err := json.Marshal(statusMessage)
-	if err != nil {
-		log.Printf("[ERROR] Failed to marshal status for job %s: %v", jobID, err)
-		return
-	}
+    status := "FAILURE"
+    if success {
+        status = "SUCCESS"
+    }
     
-    // RPUSH the status message onto a separate list for Node.js consumption
-	_, err = rdb.RPush(ctx, STATUS_QUEUE_NAME, jsonMessage).Result()
-	if err != nil {
-		log.Printf("[ERROR] Failed to push status for job %s to Redis: %v", jobID, err)
-	}
+    // Status data to be stored as the field value (e.g., a JSON string)
+    statusData := map[string]interface{}{
+        "jobId": jobID,
+        "status": status,
+        "duration": duration.String(),
+        "timestamp": time.Now().Unix(),
+    }
+
+    jsonMessage, err := json.Marshal(statusData)
+    if err != nil {
+        log.Printf("[ERROR] Failed to marshal status for job %s: %v", jobID, err)
+        return
+    }
+    
+    // --- 🔑 Use HSet to store the status in a Hash ---
+    // Key: STATUS_HASH_KEY (e.g., "job_statuses")
+    // Field: jobID (e.g., "j-12345")
+    // Value: jsonMessage (the marshaled status)
+    _, err = rdb.HSet(ctx, STATUS_HASH_KEY, jobID, jsonMessage).Result()
+    if err != nil {
+        log.Printf("[ERROR] Failed to set status for job %s in Redis Hash: %v", jobID, err)
+    } else {
+        log.Printf("[Job %s] Status successfully reported to Redis Hash '%s'.", jobID, STATUS_HASH_KEY)
+    }
 }

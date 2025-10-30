@@ -14,5 +14,7 @@ declare namespace NodeJS {
         REDIS_HOST:string
         REDIS_PORT:string
         REDIS_PASSWORD:string
+        STATUS_HASH_KEY:string
+
     }
   }
