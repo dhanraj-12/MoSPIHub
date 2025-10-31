@@ -42,9 +42,9 @@ const resolvQueryhandler = async (req: Request, res: Response) => {
   if (!survey) return res.status(400).json({ error: "Survey is required" });
 
   try {
-    const shortQuery = convertToShortform(query, survey);
-    console.log("Converted query:", shortQuery);
-    const result = await client.query(shortQuery); // ✅ use converted query
+    // const shortQuery = convertToShortform(query, survey);
+    console.log("Converted query:", query);
+    const result = await client.query(query); // ✅ use converted query
     res.json(result.rows);
   } catch (e) {
     console.error("Error in resolving query", e);

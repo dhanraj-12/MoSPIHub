@@ -1,7 +1,9 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
 import Query from './pages/Query'
+import AddSurvey from './pages/SurveyTableUploader'
+import HomePage from './pages/HomePage'
+import SurveyPage from './pages/SurveyPage'
 
 function App() {
   return (
@@ -12,7 +14,16 @@ function App() {
           element= {<HomePage/>}
         />
         <Route
-          path='/query'
+          path='/query-surveys'
+          element={<SurveyPage/>}
+        />
+        <Route
+          path='/upload-workflow'
+          element={<AddSurvey/>}
+        />
+
+        <Route
+          path='/query-processing'
           element={<Query/>}
         />
       </Routes>

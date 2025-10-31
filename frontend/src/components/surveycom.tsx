@@ -8,7 +8,7 @@ type SurveyComProps = {
 };
   
   function SurveyCom({ survey }: SurveyComProps) {
-    return <div>{survey.survey_name}</div>;
+    return <div className="text-white" >{survey.survey_name}</div>;
   }
 
   export default SurveyCom;
