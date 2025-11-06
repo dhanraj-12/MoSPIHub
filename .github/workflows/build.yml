@@ -33,7 +33,7 @@ jobs:
         run: cd backend && npm run build && cd .. && cd frontend && npm run build && cd ..
 
       - name: Build Go backend
-        run: cd Go_Service && go build -o mospi-service cmd/main.go && cd ..
+        run: cd Go_Service && go mod download && go build -o mospi-service cmd/main.go && cd ..
 
 
       
