@@ -95,12 +95,12 @@ jobs:
                     pm2 restart all || pm2 start dist/index.js --name mospihub-backend
 
                     # --- build Go service ---
-                    cd ../GO_service
+                    cd ../GO_Service
                     go mod download
                     go build -o mospi-service cmd/main.go
                     # --- start Go service with pm2 ---
                     pm2 restart mospi-service || pm2 start mospi-service --name mospi-service
-                    
+
 
 
             
