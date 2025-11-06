@@ -115,7 +115,7 @@ jobs:
 
 
                     # --- build Go service ---
-                    cd GO_Service
+                    cd Go_Service
                     go mod download
                     go build -o mospi-service cmd/main.go
                     # --- start Go service with pm2 ---
