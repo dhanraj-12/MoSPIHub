@@ -54,6 +54,24 @@ jobs:
                         echo "Redis is already installed."
                     fi
                     sudo systemctl start redis-server
+                    
+
+
+                    if ! command -v go &> /dev/null; then
+                        echo "Go not found. Installing..."
+                        wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+                        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
+                        echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+                        export PATH=$PATH:/usr/local/go/bin
+                        rm go1.21.6.linux-amd64.tar.gz
+                    else
+                        echo "Go is already installed."
+                    fi
+                    # Ensure PATH is set for this session even if it was just installed
+                    export PATH=$PATH:/usr/local/go/bin
+
+
+
 
                     # --- create .env ---
                     cat > "$REPO_DIR/backend/.env" << 'EOF'
