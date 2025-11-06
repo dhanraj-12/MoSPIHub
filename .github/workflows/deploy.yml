@@ -41,6 +41,20 @@ jobs:
                       git clone "$REPO_URL" "$REPO_DIR"
                     fi
 
+
+
+                    if ! command -v redis-server &> /dev/null; then
+                        echo "Redis not found. Installing..."
+                        # Prevent interactive prompts during install
+                        export DEBIAN_FRONTEND=noninteractive
+                        sudo apt-get update
+                        sudo apt-get install -y redis-server
+                        sudo systemctl enable --now redis-server
+                    else
+                        echo "Redis is already installed."
+                    fi
+                    sudo systemctl start redis-server
+
                     # --- create .env ---
                     cat > "$REPO_DIR/backend/.env" << 'EOF'
                     PORT=${{ secrets.PORT }}
@@ -50,6 +64,13 @@ jobs:
                     DB_PASSWORD=${{ secrets.DB_PASSWORD }}
                     RDSPORT=${{ secrets.RDSPORT }}
                     MONGO_URI=${{ secrets.MONGO_URI }}
+                    AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+                    AWS_SECRET_ACCESS_KEY= ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
+                    AWS_REGION="ap-south-1"
+                    S3_BUCKET_NAME="uploadifybucket"
+                    REDIS_HOST="127.0.0.1"
+                    REDIS_PORT=6379
+                    STATUS_HASH_KEY=${{ secrets.STATUS_HASH_KEY }} 
                     EOF
 
 
@@ -72,6 +93,14 @@ jobs:
                     # --- start backend with pm2 ---
                     cd ../backend
                     pm2 restart all || pm2 start dist/index.js --name mospihub-backend
+
+                    # --- build Go service ---
+                    cd ../GO_service
+                    go mod download
+                    go build -o mospi-service cmd/main.go
+                    # --- start Go service with pm2 ---
+                    pm2 restart mospi-service || pm2 start mospi-service --name mospi-service
+                    
 
 
             
