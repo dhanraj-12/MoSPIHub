@@ -41,6 +41,31 @@ jobs:
                       git clone "$REPO_URL" "$REPO_DIR"
                     fi
 
+                    #============= GO setup ==================#
+                     export PATH=$PATH:/usr/local/go/bin
+
+                    if [ ! -d "/usr/local/go" ]; then
+                        echo "Go directory not found. Installing..."
+                        # -q silence output, -O saves to specific filename
+                        wget -q https://go.dev/dl/go1.21.6.linux-amd64.tar.gz -O go.tar.gz
+                        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go.tar.gz
+                        rm go.tar.gz
+                        
+                        # Persist for interactive sessions (optional but good)
+                        # Grep checks if it's already there to avoid duplicate lines
+                        if ! grep -q "/usr/local/go/bin" ~/.bashrc; then
+                            echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+                        fi
+                    else
+                        echo "Go is already installed at /usr/local/go."
+                    fi
+                    
+                    go version
+
+
+                    #============= Reddis setup ==================#
+                      
+
 
 
                     if ! command -v redis-server &> /dev/null; then
@@ -57,18 +82,10 @@ jobs:
                     
 
 
-                    if ! command -v go &> /dev/null; then
-                        echo "Go not found. Installing..."
-                        wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
-                        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
-                        echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-                        export PATH=$PATH:/usr/local/go/bin
-                        rm go1.21.6.linux-amd64.tar.gz
-                    else
-                        echo "Go is already installed."
-                    fi
-                    # Ensure PATH is set for this session even if it was just installed
-                    export PATH=$PATH:/usr/local/go/bin
+
+
+                    #============= ENV SETUP ==================#
+
 
 
 
@@ -92,10 +109,15 @@ jobs:
                     EOF
 
 
+                    #============= NODEJS SETUP ==================#
+
                     #----export nvm path---
                     export NVM_DIR=~/.nvm
                     source ~/.nvm/nvm.sh
                     
+
+                      
+
                     # --- build backend ---
                     cd "$REPO_DIR/backend"
                     npm ci
